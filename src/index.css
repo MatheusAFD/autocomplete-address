@@ -1,0 +1,49 @@
+.label {
+  font-size: 1.5rem;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 30%;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+}
+.main-content input[type="number"] {
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: inherit;
+  height: 2.81rem;
+  color: #000;
+  line-height: 40px;
+  padding: 0;
+  padding-left: 5px;
+}
+
+.main-content input[type="submit"] {
+  background-color: #0070f3;
+  box-shadow: 0 4px 14px 0 rgb(0 118 255 / 39%);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 1rem 1.5rem;
+  color: #fff;
+  font-size: 1rem;
+}
+p {
+  margin: 0px;
+  font-size: 1rem;
+}
+.info {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
