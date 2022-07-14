@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 
 export function App() {
@@ -8,24 +9,28 @@ export function App() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
 
-  function returnInputValue(e) {
+  function getInputValue(e) {
     setCep(e.target.value);
   }
 
-  function returnCep() {
-    setIsShowAddress(true);
-    const getCep = fetch(`https://viacep.com.br/ws/${cep}/json/`);
+  function getCep() {
+    if (cep.length === 8) {
+      axios
+        .get(`https://viacep.com.br/ws/${cep}/json/`)
+        .then((response) => {
+          const data = response.data;
+          setLogradouro(data.logradouro);
+          setBairro(data.bairro);
+          setCidade(data.localidade);
+          setEstado(data.uf);
 
-    getCep
-      .then((resolve) => {
-        return resolve.json();
-      })
-      .then((data) => {
-        setLogradouro(data.logradouro);
-        setBairro(data.bairro);
-        setCidade(data.localidade);
-        setEstado(data.uf);
-      });
+          setIsShowAddress(true);
+        })
+        .catch((error) => {
+          alert(`${cep} não é um cep válido`);
+          setIsShowAddress(false);
+        });
+    }
   }
 
   return (
@@ -35,32 +40,22 @@ export function App() {
           Find my address
         </label>
         <input
-          type="number"
-          name=""
-          id=""
-          onChange={returnInputValue}
+          type="text"
+          pattern="\d"
+          maxLength={8}
           placeholder="00000000"
+          onChange={getInputValue}
+          onBlur={getCep}
         />
-        <input type="submit" value="Encontrar endereço" onClick={returnCep} />
 
-        {isShowAddress ? (
-          <>
-            <label htmlFor="rua" className="info">
-              Rua
-            </label>
-            <p className="result">{logradouro}</p>
-
-            <label htmlFor="numero" className="info">
-              Bairro
-            </label>
-            <p>{bairro}</p>
-
-            <label htmlFor="cidade" className="info">
-              Cidade / Estado
-            </label>
-            <p>{`${cidade} / ${estado}`}</p>
-          </>
-        ) : null}
+        {isShowAddress && (
+          <div>
+            <p>{logradouro}</p>
+            <p>Bairro: {bairro}</p>
+            <p>Cidade: {cidade}</p>
+            <p>Estado: {estado}</p>
+          </div>
+        )}
       </div>
     </main>
   );
