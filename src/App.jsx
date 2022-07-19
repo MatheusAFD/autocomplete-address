@@ -1,36 +1,28 @@
 import axios from "axios";
 import { useState } from "react";
+import InputMask from "react-input-mask";
 
 export function App() {
   const [isShowAddress, setIsShowAddress] = useState(false);
   const [cep, setCep] = useState("");
-  const [logradouro, setLogradouro] = useState("");
-  const [bairro, setBairro] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
+  const [data, setData] = useState("");
 
   function getInputValue(e) {
     setCep(e.target.value);
+    cep.replace("-", "");
   }
 
-  function getCep() {
-    if (cep.length === 8) {
-      axios
-        .get(`https://viacep.com.br/ws/${cep}/json/`)
-        .then((response) => {
-          const data = response.data;
-          setLogradouro(data.logradouro);
-          setBairro(data.bairro);
-          setCidade(data.localidade);
-          setEstado(data.uf);
-
-          setIsShowAddress(true);
-        })
-        .catch((error) => {
-          alert(`${cep} não é um cep válido`);
-          setIsShowAddress(false);
-        });
+  async function getCep() {
+    if (cep.length === 9) {
+      const res = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+      return res;
     }
+  }
+
+  async function CepData() {
+    const res = await getCep();
+    setData(res.data);
+    setIsShowAddress(true);
   }
 
   return (
@@ -39,21 +31,14 @@ export function App() {
         <label htmlFor="" className="label">
           Find my address
         </label>
-        <input
-          type="text"
-          pattern="\d"
-          maxLength={8}
-          placeholder="00000000"
-          onChange={getInputValue}
-          onBlur={getCep}
-        />
+        <InputMask onChange={getInputValue} mask="99999-999" onBlur={CepData} />
 
         {isShowAddress && (
           <div>
-            <p>{logradouro}</p>
-            <p>Bairro: {bairro}</p>
-            <p>Cidade: {cidade}</p>
-            <p>Estado: {estado}</p>
+            <p>Logradouro: {data.logradouro}</p>
+            <p>Bairro: {data.bairro}</p>
+            <p>Cidade: {data.localidade}</p>
+            <p>Estado: {data.uf}</p>
           </div>
         )}
       </div>
